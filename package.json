@@ -2,18 +2,29 @@
   "name": "vuejs",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "",
-  "license": "ISC",
+  "scripts": {
+    "test": "jest"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "core-js": "^3.6.5",
+    "vue-jest": "^3.0.7"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.11.10",
+    "@testing-library/vue": "^5.6.1",
+    "@vue/cli": "^4.5.12",
+    "@vue/cli-plugin-unit-jest": "^4.5.12",
+    "@vue/test-utils": "^1.0.3",
+    "vue": "^2.6.12",
+    "vue-router": "^3.5.1",
+    "vue-template-compiler": "^2.6.12",
+    "vuetify": "^2.4.9",
+    "vuex": "^3.6.2"
+  },
   "engines": {
     "node": ">=14 <15"
   },
-  "devDependencies": {
-    "@testing-library/vue": "^5.6.1",
-    "vue": "^2.6.12",
-    "vuex": "^3.6.2"
-  }
+  "license": "ISC"
 }
