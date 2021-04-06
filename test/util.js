@@ -3,6 +3,8 @@ import { render as _render } from '@testing-library/vue';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 
+import store from '../src/store';
+
 Vue.use(Vuetify);
 
 export function render(component, options, callback) {
@@ -14,6 +16,7 @@ export function render(component, options, callback) {
     {
       container: document.body.appendChild(root),
       vuetify: new Vuetify(),
+      store,
       ...options,
     },
     callback
