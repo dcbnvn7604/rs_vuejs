@@ -10,6 +10,11 @@ const actions = {
     }
   },
 
+  async login(_, loginData) {
+    let token = await api.login(loginData['username'], loginData['password']);
+    localStorage.setItem('token', token);
+  },
+
   async listEntry({commit}) {
     let entries = await api.listEntry();
     commit('setEntries', entries);
