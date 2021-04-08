@@ -56,7 +56,7 @@ describe('router', () => {
       json: () => Promise.resolve({'token': 'token1'})
     }));
 
-    const { getByTestId, findByTestId, debug } = render(App, {routes});
+    const { getByTestId, findByTestId } = render(App, {routes});
 
     await findByTestId('login');
     await fireEvent.update(getByTestId('usernameInput', 'username1'));
