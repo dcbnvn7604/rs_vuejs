@@ -25,7 +25,19 @@ class API {
     this.token = token;
   }
 
-  async listEntry() {}
+  async listEntry() {
+    let response = await fetch(`${this.host}/api/entry/`, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    switch (response.status) {
+      case 200:
+        return await response.json();
+      default:
+        throw new UnsupportException();
+    }
+  }
 
   async login(username, password) {
     let response = await fetch(`${this.host}/api/auth/`, {

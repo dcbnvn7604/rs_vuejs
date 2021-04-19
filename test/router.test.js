@@ -16,18 +16,24 @@ describe('router', () => {
       getByTestId('login');
     }).toThrow();
     expect(() => {
-      getByTestId('home');
+      getByTestId('listentry');
     }).not.toThrow();
     await findByTestId('login');
     expect(() => {
       getByTestId('login');
     }).not.toThrow();
     expect(() => {
-      getByTestId('home');
+      getByTestId('listentry');
     }).toThrow();
   });
 
   test('logined redirect to page home', async () => {
+    let mockFetch = jest.fn();
+    mockFetch.mockReturnValue(Promise.resolve({
+      status: 200,
+      json: () => Promise.resolve([{id: 1, title: 'title 1', content: 'content 1'}]),
+    }));
+    global.fetch = mockFetch;
     let mock = jest.spyOn(window.localStorage.__proto__, "getItem");
     mock.mockReturnValue("token");
 
@@ -38,23 +44,25 @@ describe('router', () => {
       getByTestId('login');
     }).not.toThrow();
     expect(() => {
-      getByTestId('home');
+      getByTestId('listentry');
     }).toThrow();
-    await findByTestId('home');
+    await findByTestId('listentry');
     expect(() => {
       getByTestId('login');
     }).toThrow();
     expect(() => {
-      getByTestId('home');
+      getByTestId('listentry');
     }).not.toThrow();
     mock.mockRestore();
   });
 
   test('login success redirect to page home', async () => {
-    global.fetch = jest.fn().mockImplementation(() => Promise.resolve({
+    let mockFetch = jest.fn();
+    mockFetch.mockReturnValue(Promise.resolve({
       status: 200,
       json: () => Promise.resolve({'token': 'token1'})
     }));
+    global.fetch = mockFetch;
 
     const { getByTestId, findByTestId } = render(App, {routes});
 
@@ -63,12 +71,39 @@ describe('router', () => {
     await fireEvent.update(getByTestId('passwordInput', 'password1'));
     await fireEvent.click(getByTestId('loginButton'));
 
-    await findByTestId('home');
+    await findByTestId('listentry');
     expect(() => {
       getByTestId('login');
     }).toThrow();
     expect(() => {
-      getByTestId('home');
+      getByTestId('listentry');
     }).not.toThrow();
+  });
+
+  test('go to creating page', async () => {
+    api.setToken('token1');
+    let mockFetch = jest.fn();
+    mockFetch.mockReturnValue(Promise.resolve({
+      status: 200,
+      json: () => Promise.resolve([{id: 1, title: 'title 1', content: 'content 1'}]),
+    }));
+    global.fetch = mockFetch;
+
+    const { getByTestId, findByTestId } = render(App, {routes});
+    await findByTestId('listentry');
+    expect(() => {
+      getByTestId('editentry');
+    }).toThrow();
+    expect(() => {
+      getByTestId('listentry');
+    }).not.toThrow();
+    await fireEvent.click(getByTestId('createButton'));
+    await findByTestId('editentry');
+    expect(() => {
+      getByTestId('editentry');
+    }).not.toThrow();
+    expect(() => {
+      getByTestId('listentry');
+    }).toThrow();
   });
 });

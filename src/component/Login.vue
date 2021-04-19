@@ -1,20 +1,24 @@
 <template>
-  <v-row align="center" data-testid="login">
-    <v-col align="center">
-      <validation-observer v-slot="{ invalid }">
-        <form>
-        <validation-provider v-slot="{ errors }" name="username" rules="required">
-          <v-text-field v-model="username" data-testid="usernameInput" :error-messages="errors"></v-text-field>
-        </validation-provider>
-        <validation-provider v-slot="{ errors }" name="password" rules="required">
-          <v-text-field v-model="password" data-testid="passwordInput" :error-messages="errors"></v-text-field>
-        </validation-provider>
-        <v-btn @click="login" data-testid="loginButton" :disabled="invalid">Log in</v-btn>
-        <div>{{invalid}}</div>
-      </form>
-      </validation-observer>
-    </v-col>
-  </v-row>
+  <v-main data-testid="login">
+    <v-container fluid>
+      <v-row align="center">
+        <v-col align="center">
+          <validation-observer v-slot="{ invalid }">
+            <form>
+            <validation-provider v-slot="{ errors }" name="username" rules="required">
+              <v-text-field v-model="username" data-testid="usernameInput" :error-messages="errors"></v-text-field>
+            </validation-provider>
+            <validation-provider v-slot="{ errors }" name="password" rules="required">
+              <v-text-field v-model="password" data-testid="passwordInput" :error-messages="errors"></v-text-field>
+            </validation-provider>
+            <v-btn @click="login" data-testid="loginButton" :disabled="invalid">Log in</v-btn>
+            <div>{{invalid}}</div>
+          </form>
+          </validation-observer>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-main>
 </template>
 
 <script>

@@ -1,9 +1,7 @@
 <template>
-  <v-main>
-    <v-container fluid>
-      <router-view></router-view>
-    </v-container>
-  </v-main>
+  <v-app>
+    <router-view></router-view>
+  </v-app>
 </template>
 
 <script>
