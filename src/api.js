@@ -30,10 +30,26 @@ class API {
       headers: {
         'Content-Type': 'application/json'
       }
-    })
+    });
     switch (response.status) {
       case 200:
         return await response.json();
+      default:
+        throw new UnsupportException();
+    }
+  }
+
+  async createEntry(entry) {
+    let response = await fetch(`${this.host}/api/entry/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(entry)
+    });
+    switch (response.status) {
+      case 201:
+        return;
       default:
         throw new UnsupportException();
     }

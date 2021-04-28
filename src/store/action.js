@@ -18,6 +18,10 @@ const actions = {
   async listEntry({commit}) {
     let entries = await api.listEntry();
     commit('setEntries', entries);
+  },
+
+  async createEntry(_, entry) {
+    await api.createEntry(entry);
   }
 }
 

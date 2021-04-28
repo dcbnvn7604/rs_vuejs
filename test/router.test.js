@@ -1,4 +1,4 @@
-import { fireEvent } from '@testing-library/vue';
+import { fireEvent, waitFor } from '@testing-library/vue';
 
 import { render } from './util.js';
 import App from '../src/component/App.vue';
@@ -10,7 +10,7 @@ describe('router', () => {
     api.setToken('');
   });
 
-  test('no login redirect to page login', async () => {
+  test('no login redirect to page `login`', async () => {
     const { getByTestId, findByTestId } = render(App, {routes});
     expect(() => {
       getByTestId('login');
@@ -27,7 +27,7 @@ describe('router', () => {
     }).toThrow();
   });
 
-  test('logined redirect to page home', async () => {
+  test('logined redirect to page `list entry`', async () => {
     let mockFetch = jest.fn();
     mockFetch.mockReturnValue(Promise.resolve({
       status: 200,
@@ -56,7 +56,7 @@ describe('router', () => {
     mock.mockRestore();
   });
 
-  test('login success redirect to page home', async () => {
+  test('login success redirect to page `list entry`', async () => {
     let mockFetch = jest.fn();
     mockFetch.mockReturnValue(Promise.resolve({
       status: 200,
@@ -80,7 +80,7 @@ describe('router', () => {
     }).not.toThrow();
   });
 
-  test('go to creating page', async () => {
+  test('go to page `create entry`', async () => {
     api.setToken('token1');
     let mockFetch = jest.fn();
     mockFetch.mockReturnValue(Promise.resolve({
@@ -105,5 +105,45 @@ describe('router', () => {
     expect(() => {
       getByTestId('listentry');
     }).toThrow();
+  });
+
+  test('create entry success redirect to page `list entry`', async () => {
+    api.setToken('token1');
+    let mockFetch = jest.fn();
+    mockFetch.mockReturnValueOnce(Promise.resolve({
+      status: 201
+    }));
+    mockFetch.mockReturnValueOnce(Promise.resolve({
+      status: 200,
+      json: () => Promise.resolve([{id: 1, title: 'title 1', content: 'content 1'}]),
+    }));
+    global.fetch = mockFetch;
+
+    const { findByTestId, getByTestId } = render(App, {routes}, (vue, store, router) => {
+      router.push('/entry/create');
+    });
+    await findByTestId('editentry');
+    await fireEvent.update(getByTestId('titleInput'), 'title1');
+    await fireEvent.update(getByTestId('contentInput'), 'content1');
+    await waitFor(() => {
+      expect(getByTestId('editButton').disabled).toBeFalsy();
+    });
+    await fireEvent.click(getByTestId('editButton'));
+    await findByTestId('listentry');
+  });
+
+  test('no login in page `create entry` redirect to page `login`', async() => {
+    const { findByTestId, getByTestId } = render(App, {routes}, (vue, store, router) => {
+      router.push('/entry/create');
+    });
+
+    await findByTestId('editentry');
+    await fireEvent.update(getByTestId('titleInput'), 'title1');
+    await fireEvent.update(getByTestId('contentInput'), 'content1');
+    await waitFor(() => {
+      expect(getByTestId('editButton').disabled).toBeFalsy();
+    });
+    await fireEvent.click(getByTestId('editButton'));
+    await findByTestId('login');
   });
 });
