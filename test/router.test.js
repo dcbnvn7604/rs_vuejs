@@ -75,9 +75,6 @@ describe('router', () => {
     expect(() => {
       getByTestId('login');
     }).toThrow();
-    expect(() => {
-      getByTestId('listentry');
-    }).not.toThrow();
   });
 
   test('go to page `create entry`', async () => {
@@ -132,7 +129,10 @@ describe('router', () => {
     await findByTestId('listentry');
   });
 
-  test('no login in page `create entry` redirect to page `login`', async() => {
+  test('no login in page `create entry` redirect to page `login`', async () => {
+    let mock = jest.spyOn(window.localStorage.__proto__, "getItem");
+    mock.mockReturnValue(null);
+
     const { findByTestId, getByTestId } = render(App, {routes}, (vue, store, router) => {
       router.push('/entry/create');
     });
@@ -145,5 +145,55 @@ describe('router', () => {
     });
     await fireEvent.click(getByTestId('editButton'));
     await findByTestId('login');
+  });
+
+  test('navigate between page `register` and `login`', async () => {
+    let mock = jest.spyOn(window.localStorage.__proto__, "getItem");
+    mock.mockReturnValue(null);
+
+    const { getByTestId, findByTestId } = render(App, {routes}, (vue, store, router) => {
+      router.push('/login');
+    });
+    await findByTestId('login');
+    expect(() => {
+      getByTestId('register');
+    }).toThrow();
+    await fireEvent.click(getByTestId('registerButton'));
+    await findByTestId('register');
+    expect(() => {
+      getByTestId('login');
+    }).toThrow();
+    await fireEvent.click(getByTestId('loginButton'));
+    await findByTestId('login');
+    expect(() => {
+      getByTestId('register');
+    }).toThrow();
+  });
+
+  test('register success redirect to page `list entry`', async () => {
+    let mockFetch = jest.fn();
+    mockFetch.mockReturnValueOnce(Promise.resolve({
+      status: 201,
+      json: () => Promise.resolve({'token': 'token1'})
+    }));
+    mockFetch.mockReturnValueOnce(Promise.resolve({
+      status: 200,
+      json: () => Promise.resolve([{id: 1, title: 'title 1', content: 'content 1'}]),
+    }));
+    global.fetch = mockFetch;
+
+    const { getByTestId, findByTestId } = render(App, {routes});
+
+    await findByTestId('login');
+    await fireEvent.click(getByTestId('registerButton'));
+    await fireEvent.update(getByTestId('usernameInput', 'username1'));
+    await fireEvent.update(getByTestId('passwordInput', 'password1'));
+    await fireEvent.update(getByTestId('repasswordInput', 'repassword1'));
+    await fireEvent.click(getByTestId('registerButton'));
+
+    await findByTestId('listentry');
+    expect(() => {
+      getByTestId('register');
+    }).toThrow();
   });
 });

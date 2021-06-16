@@ -8,7 +8,7 @@ class API {
         if (field != 'setHost' && !this.host) {
           throw new Error('No api host');
         }
-        if (['setToken', 'login', 'setHost', 'host'].includes(field)) return api[field];
+        if (['setToken', 'login', 'setHost', 'host', 'register'].includes(field)) return api[field];
         if (!this.token) {
           throw new UnauthenticatedException();
         }
@@ -65,6 +65,23 @@ class API {
     });
     switch (response.status) {
       case 200: 
+        let _response = await response.json();
+        return _response['token'];
+      default:
+        throw new UnsupportException();
+    }
+  }
+
+  async register(username, password, repassword) {
+    let response = await fetch(`${this.host}/api/register/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({username, password, repassword})
+    });
+    switch (response.status) {
+      case 201: 
         let _response = await response.json();
         return _response['token'];
       default:

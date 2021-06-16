@@ -1,5 +1,5 @@
 <template>
-  <v-main data-testid="login">
+  <v-main data-testid="register">
     <v-container fluid>
       <v-row align="center">
         <v-col align="center">
@@ -11,8 +11,11 @@
               <validation-provider v-slot="{ errors }" name="password" rules="required">
                 <v-text-field v-model="password" data-testid="passwordInput" :error-messages="errors"></v-text-field>
               </validation-provider>
-              <v-btn @click="login" data-testid="loginButton" :disabled="invalid">Log in</v-btn>
-              <v-btn @click="register" data-testid="registerButton">Register</v-btn>
+              <validation-provider v-slot="{ errors }" name="repassword" rules="required|repassword:@password">
+                <v-text-field v-model="repassword" data-testid="repasswordInput" :error-messages="errors"></v-text-field>
+              </validation-provider>
+              <v-btn @click="register" data-testid="registerButton" :disabled="invalid">Register</v-btn>
+              <v-btn @click="login" data-testid="loginButton">Log in</v-btn>
             </form>
           </validation-observer>
         </v-col>
@@ -25,9 +28,15 @@
   import { extend, ValidationProvider, ValidationObserver } from 'vee-validate';
   import { required } from 'vee-validate/dist/rules';
 
-  import { UnauthenticatedException } from '../api';
-
   extend('required', required);
+
+  extend('repassword', {
+    params: ['password'],
+    validate(repassword, { password }) {
+      return repassword === password
+    },
+    message: 'repassword is not matching.'
+  });
 
   export default {
     components: {
@@ -38,32 +47,23 @@
     data() {
       return {
         username: '',
-        password: ''
+        password: '',
+        repassword: '',
       };
     },
 
     methods: {
-      async login() {
-        await this.$store.dispatch('login', {
-          username: this.username,
-          password: this.password
-        });
-        this.$router.push('/');
+      login() {
+        this.$router.push('/login');
       },
 
-      register() {
-        this.$router.push('/register');
-      }
-    },
-
-    mounted() {
-      try {
-        this.$store.dispatch('checkLogin');
+      async register() {
+        await this.$store.dispatch('register', {
+          username: this.username,
+          password: this.password,
+          repassword: this.repassword
+        });
         this.$router.push('/');
-      } catch(e) {
-        if (!(e instanceof UnauthenticatedException)) {
-          throw e;
-        }
       }
     }
   };

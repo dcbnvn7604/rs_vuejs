@@ -22,6 +22,11 @@ const actions = {
 
   async createEntry(_, entry) {
     await api.createEntry(entry);
+  },
+
+  async register(_, registerData) {
+    let token = await api.register(registerData['username'], registerData['password'], registerData['repassword']);
+    localStorage.setItem('token', token);
   }
 }
 
