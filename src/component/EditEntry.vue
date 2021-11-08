@@ -43,19 +43,11 @@
 
     methods: {
       async create() {
-        try {
-          await this.$store.dispatch('createEntry', {
+        await this.$store.dispatch('createEntry', {
             'title': this.title,
             'content': this.content
-          });
-          this.$router.push('/entry');
-        } catch(e) {
-          if (e instanceof UnauthenticatedException) {
-            this.$router.push('/login');
-            return;
-          }
-          throw e;
-        }
+        });
+        this.$router.push('/entry');
       }
     }
   };

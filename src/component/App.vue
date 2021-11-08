@@ -5,5 +5,14 @@
 </template>
 
 <script>
-  export default {};
+  import { UnauthenticatedException } from '../api';
+
+  export default {
+    errorCaptured(err) {
+      if (err instanceof UnauthenticatedException) {
+        this.$router.push('/login');
+        return false;
+      } 
+    }
+  };
 </script>

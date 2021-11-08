@@ -17,7 +17,6 @@
 </template>
 <script>
   import { mapState } from 'vuex';
-  import { UnauthenticatedException } from '../api';
 
   export default {
     methods: {
@@ -29,15 +28,7 @@
     computed: mapState(['entries']),
 
     async mounted() {
-      try {
-        await this.$store.dispatch('listEntry');
-      } catch (e) {
-        if (e instanceof UnauthenticatedException) {
-          this.$router.push('/login');
-        } else {
-          throw e;
-        }
-      }
+      await this.$store.dispatch('listEntry');
     }
   };
 </script>
